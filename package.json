@@ -14,7 +14,7 @@
     "ampersand-select-view": "^2.2.1",
     "matches-selector": "^v1.0.0",
     "jquery": "^2.1.1",
-    "bootstrap-tagsinput": "git+ssh://git@github.com/firstclass/bootstrap-tagsinput#production"
+    "bootstrap-tagsinput": "git+ssh://git@github.com/gdibble/bootstrap-tagsinput#production"
   },
   "devDependencies": {
     "beefy": "^2.1.1",
