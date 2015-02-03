@@ -1,7 +1,7 @@
 {
   "name": "ampersand-bootstrap-tagsinput-view",
   "description": "Ampersand select/input view for creating tags in Bootstrap 2/3.",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": {
     "name": "Gabriel Dibble",
     "email": "gdibble@gmail.com"
