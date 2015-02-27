@@ -219,5 +219,8 @@ module.exports = State.extend(SelectView, {
   },
   handleBlurElm: function () {
     $('.bootstrap-tagsinput').removeClass('focused');
+  },
+  remove: function() {
+    SelectView.prototype.remove.apply(this, arguments);
   }
 });
