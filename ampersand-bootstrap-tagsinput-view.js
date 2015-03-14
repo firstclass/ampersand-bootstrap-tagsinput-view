@@ -7,11 +7,9 @@ var TagsInput  = require('./node_modules/bootstrap-tagsinput/dist/bootstrap-tags
 TagsInput = TagsInput; //ignore JSHint defined/!used
 
 // Private Helpers:
-
-function newArray() {
-  return [];
-}
-
+function newArray() { return []; }
+function newObject() { return {}; }
+function newFunction() { return function () {}; }
 function createOption (value, text) {
   var option = document.createElement('option');
 
@@ -32,19 +30,21 @@ function createOption (value, text) {
 
 module.exports = State.extend(SelectView, {
   props: {
-    name:            [ 'string', true, 'tags'               ],
-    label:           [ 'string', true, 'Tags'               ],
-    message:         [ 'string', true, ''                   ],
-    placeholder:     [ 'string', true, 'tags'               ],
-    validClass:      [ 'string', true, 'input-valid'        ],
-    invalidClass:    [ 'string', true, 'input-invalid'      ],
-    tests:           [ 'array',  true, newArray             ],
-    options:         [ 'array',  true, newArray             ],
-    type:            [ 'string', true, 'file'               ],
-    template:        'string',
-    requiredMessage: 'any', //
-    unselectedText:  'any', // these are any so a function returning a string can be passed
-    value:           'any'  //
+    name:                 [ 'string', true, 'tags'          ],
+    label:                [ 'string', true, 'Tags'          ],
+    message:              [ 'string', true, ''              ],
+    placeholder:          [ 'string', true, 'tags'          ],
+    validClass:           [ 'string', true, 'input-valid'   ],
+    invalidClass:         [ 'string', true, 'input-invalid' ],
+    tests:                [ 'array',  true, newArray        ],
+    options:              [ 'array',  true, newArray        ],
+    type:                 [ 'string', true, 'file'          ],
+    preRenderTagsinputCb: [ 'any',    true, newFunction     ],
+    tagsinputOptions:     [ 'object', true, newObject       ],
+    template:             'string',
+    requiredMessage:      'any', //
+    unselectedText:       'any', // these are any so a function returning a string can be passed
+    value:                'any'  //
   },
   // events:  {},
   initialize: function (spec) {
@@ -79,9 +79,9 @@ module.exports = State.extend(SelectView, {
       label.textContent = this.label;
     }
 
-    this.select = this.el.querySelector('select');
-    if (matches(this.el, 'select')) {
-      this.select = this.el;
+    this.formField = this.template.indexOf('select') > -1 ? this.el.querySelector('select') : this.el.querySelector('input');
+    if (matches(this.el, 'select') || matches(this.el, 'input')) {
+      this.formField = this.el;
     }
 
     this.bindDOMEvents();
@@ -97,10 +97,12 @@ module.exports = State.extend(SelectView, {
 
     this.rendered = true;
 
+    //run [tagsinput initialization] prerequisites
+    this.preRenderTagsinputCb();
     //setup tagsinput
-    $(this.select).tagsinput();
+    $(this.formField).tagsinput(this.tagsinputOptions);
 
-    $('input', this.el)
+    $(this.formField)
       .on('focus.tagsinput', this.handleFocusElm)
       .on('blur.tagsinput', this.handleBlurElm);
   },
@@ -131,15 +133,15 @@ module.exports = State.extend(SelectView, {
     }
   },
   renderOptions: function () {
-    if (!this.select) {
+    if (!this.formField) {
       return;
     }
-    this.select.innerHTML = '';
+    this.formField.innerHTML = '';
 
     // Add <option>(s):
     //unselectedText
     if (this.unselectedText !== null && this.unselectedText !== undefined) {
-      this.select.appendChild(
+      this.formField.appendChild(
         createOption(
           this.unselectedText
         )
@@ -147,7 +149,7 @@ module.exports = State.extend(SelectView, {
     }
     //value
     if (this.value !== null && this.value !== undefined) {
-      this.select.appendChild(
+      this.formField.appendChild(
         createOption(
           this.value
         )
@@ -155,7 +157,7 @@ module.exports = State.extend(SelectView, {
     }
     //options
     this.options.forEach(function (option) {
-      this.select.appendChild(createOption(
+      this.formField.appendChild(createOption(
         this.getOptionValue(option),
         this.getOptionText(option)
       ));
@@ -188,12 +190,12 @@ module.exports = State.extend(SelectView, {
   updateSelectedOption: function () {
     var lookupValue = this.value;
 
-    if (!this.select) {
+    if (!this.formField) {
       return;
     }
 
     if (!lookupValue) {
-      this.select.selectedIndex = 0;
+      this.formField.selectedIndex = 0;
       return;
     }
 
@@ -203,16 +205,16 @@ module.exports = State.extend(SelectView, {
     }
 
     if (lookupValue) {
-      for (var i = this.select.options.length; i--; i) {
-        if (this.select.options[i].value === lookupValue.toString()) {
-          this.select.selectedIndex = i;
+      for (var i = this.formField.options.length; i--; i) {
+        if (this.formField.options[i].value === lookupValue.toString()) {
+          this.formField.selectedIndex = i;
           return;
         }
       }
     }
 
     //If failed to match any
-    this.select.selectedIndex = 0;
+    this.formField.selectedIndex = 0;
   },
   handleFocusElm: function () {
     $('.bootstrap-tagsinput').addClass('focused');
