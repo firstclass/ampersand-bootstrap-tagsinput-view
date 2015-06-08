@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "ampersand-state": "^4.3.14",
-    "ampersand-select-view": "^2.2.1",
+    "ampersand-select-view": "^4.0.0",
     "matches-selector": "^v1.0.0",
     "jquery": "^2.1.1",
     "bootstrap-tagsinput": "git+ssh://git@github.com/gdibble/bootstrap-tagsinput#production"
