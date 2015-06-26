@@ -3,7 +3,7 @@ var State      = require('ampersand-state');
 var SelectView = require('ampersand-select-view');
 var matches    = require('matches-selector');
 var $          = window.$ || require('jquery'); //use $ if exists, else load dep.
-var TagsInput  = require('./node_modules/bootstrap-tagsinput/dist/bootstrap-tagsinput');
+var TagsInput  = require('bootstrap-tagsinput');
 TagsInput = TagsInput; //ignore JSHint defined/!used
 
 // Private Helpers:
